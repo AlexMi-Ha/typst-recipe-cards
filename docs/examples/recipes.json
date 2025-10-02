@@ -1,0 +1,11 @@
+[
+  {
+    "title": "Pfannkuchen",
+    "grouping": "Mehlspeisen",
+    "servings": 4,
+    "prep_time": "5min",
+    "cook_time": "20min",
+    "ingredients": "- 400g Ingredient 1\n- 200g Ingredient 2\n- 200g Ingredient 3",
+    "steps": "+ Schritt 1\n+ Schritt 2"
+  }
+]

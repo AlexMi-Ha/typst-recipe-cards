@@ -1,0 +1,11 @@
+[
+    {
+        "title": "Pfannkuchen",
+        "grouping": "Mehlspeisen",
+        "servings": 4,
+        "prep_time": "5min",
+        "cook_time": "20min",
+        "ingredients": "=== Header\n- 400 g Mehl\n- 4 Eier\n- 400 ml Milch",
+        "steps": "+ Zutaten zu einen glatten Teig vermischen\n+ Milch zugeben bis recht flüssig\n+ Portionsweise von beiden Seiten braten"
+    }
+]
