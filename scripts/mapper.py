@@ -1,5 +1,6 @@
 import json
 import os
+import argparse
 
 class Recipe:
     def __init__(self, title:str, category:str, grouping:str, servings:int, prep_time:str, cook_time:str, ingredients: list[str], steps: list[str]):
@@ -176,9 +177,17 @@ def exportCategories(categories: dict[str, list[Recipe]], outPath: str):
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(jsonContent)
 
+def parseArgs():
+    parser = argparse.ArgumentParser(description="Mapper script")
+    parser.add_argument("-i", "--input", required=True, help="Parent path where the recipe markdown files are located")
+    parser.add_argument("-o", "--output", required=True, help="Output path for recipe json files")
+
+    return parser.parse_args()
+    
 if __name__ == '__main__':
-    inPath = './docs'
-    outPath = './out/json'
+    args = parseArgs()
+    inPath = args.input
+    outPath = args.output
 
     print('Welcome to the Obsidian to Typst Recipe converter!')
     print('Searching for recipes...')
