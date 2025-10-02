@@ -9,7 +9,9 @@
   parse-body: true                  // enable Auto mode
 )
 
-#let recipes = json("recipes.json");
+
+
+#let recipes = json(sys.inputs.at("jsonPath", default:"recipes.json"));
 
 #for recipe in recipes {
   recipe-card(
