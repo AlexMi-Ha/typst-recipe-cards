@@ -11,7 +11,7 @@ let recipes = json(sys.inputs.at("jsonPath", default:"recipes.json"))
 
   if(format == "a5") {
     import "template/a5.typ": printA5
-    printA5(recipes: recipes)
+    printA5(recipes: recipes, allowMultiplePagesPerRecipe: false)
   }else if(format == "cards") {
     import "template/cards.typ": printCards
     printCards(recipes: recipes)
