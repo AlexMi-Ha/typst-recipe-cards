@@ -1,5 +1,5 @@
 #let contentWithMaxHeight(ratioToFullHeight:float, body:content) = context {
-  let bodyScale = box(width: 128mm, body)
+  let bodyScale = box(width: 123mm, body)
 
   let contentHeight = measure(bodyScale).height
   let height = calc.min(contentHeight, ratioToFullHeight * page.height)

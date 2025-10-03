@@ -11,8 +11,14 @@
   import "components/recipe-sheet.typ": recipeSheet
   set page(
     paper: "a5",
-    margin: 1cm
+    margin: (y: 1cm, right: 1cm, left: 1.5cm)
   )
+  if(allowMultiplePagesPerRecipe) {
+    set page(
+      paper: "a5",
+      margin: (y: 1cm, outside: 1cm, inside: 1.5cm)
+    )
+  }
 
   let i = 0
   for recipe in recipes {
