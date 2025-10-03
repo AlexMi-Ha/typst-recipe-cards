@@ -17,6 +17,9 @@ class Recipe:
         self.steps = steps
         self.hints = hints
 
+    def setId(self, categoryId:str, groupingId:str):
+        self.id = f'{categoryId.capitalize()}-{groupingId.capitalize()}-{self.title[0].upper()}'
+
     def to_json(self):
         return self.__dict__
 
@@ -183,7 +186,48 @@ def groupByCategory(recipes: list[Recipe]) -> dict[str, list[Recipe]]:
         if recipe.category not in categories:
             categories[recipe.category] = []
         categories[recipe.category].append(recipe)
+
+    for category in categories:
+        recipes = categories[category]
+        recipes.sort(key=lambda r: (r.grouping, r.title))
+
     return categories
+
+def calculateIds(recipesByCategory: dict[str, list[Recipe]]):
+    categoryIdMapper = getUniqueIdsFromSet(recipesByCategory.keys())
+
+    for category in recipesByCategory:
+        distinctGroupings = []
+        for recipe in recipesByCategory[category]:
+            if recipe.grouping not in distinctGroupings:
+                distinctGroupings.append(recipe.grouping)
+        
+        groupingIdMapper = getUniqueIdsFromSet(distinctGroupings)
+
+        for recipe in recipesByCategory[category]:
+            recipe.setId(categoryIdMapper[recipe.category], groupingIdMapper[recipe.grouping])
+
+def getUniqueIdsFromSet(setOfFullNames: list[str]):
+    idMapper = {}
+    for item in setOfFullNames:
+        idSplitPointer = 1
+        while item[:idSplitPointer] in idMapper:
+            oldId = item[:idSplitPointer]
+            idSplitPointer += 1
+            oldItem = idMapper[oldId]
+            if idSplitPointer > len(oldItem):
+                raise Exception(f"Cannot get unique identifiers from set. Conflict between '{oldItem}' and '{item}'")
+            
+            newId = oldItem[:idSplitPointer]
+            idMapper.pop(oldId)
+            idMapper[newId] = oldItem
+        
+        if idSplitPointer > len(item):
+            raise Exception(f"Cannot get unique identifiers from set. Conflict at '{item}'")
+        
+        idMapper[item[:idSplitPointer]] = item
+    
+    return dict((v, k) for k, v in idMapper.items())
 
 def exportCategories(categories: dict[str, list[Recipe]], outPath: str):
     for category in categories:
@@ -217,5 +261,7 @@ if __name__ == '__main__':
     recipeModels = parseRecipes(recipeFiles)
     categories = groupByCategory(recipeModels)
     print(f'Parsed and grouped by {len(categories.keys())} categories!')
+    print('Generating IDs...')
+    calculateIds(categories)
     print(f'Exporting json files to {outPath}...')
     exportCategories(categories, outPath)
