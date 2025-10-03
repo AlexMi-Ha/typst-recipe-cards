@@ -2,14 +2,14 @@
 #import "template/components/quick-cards/card-templates.typ": recipe-card-template
 #import "template/components/recipe-cards-util.typ": recipe-card
 
+
 #show: quick-cards-show.with(
   columns:2,                        // quick-cards does layout automatically i.e.
   rows:4,                           // questions and answers line up when printing twosided
   card-template: recipe-card-template, // there's predefined templates or create your own
   parse-body: true                  // enable Auto mode
+
 )
-
-
 
 #let recipes = json(sys.inputs.at("jsonPath", default:"recipes.json"));
 

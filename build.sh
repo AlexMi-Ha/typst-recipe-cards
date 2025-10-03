@@ -14,10 +14,10 @@ TYPST_JSON_PATH="./data"
 
 mkdir -p "$JSON_OUTPUT"
 mkdir -p "$PDF_OUTPUT"
-mkdir -p "$TYPST_JSON_PATH"
-rm $JSON_OUTPUT/*.json
-rm $PDF_OUTPUT/*.pdf
-rm ./typst/$TYPST_JSON_PATH/*.json
+mkdir -p "./typst/$TYPST_JSON_PATH"
+rm -f $JSON_OUTPUT/*.json
+rm -f $PDF_OUTPUT/*.pdf
+rm -f ./typst/$TYPST_JSON_PATH/*.json
 
 python3 ./scripts/mapper.py -i "$INPUT_PATH" -o "$JSON_OUTPUT"
 
