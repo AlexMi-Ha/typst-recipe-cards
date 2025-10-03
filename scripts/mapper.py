@@ -3,22 +3,22 @@ import os
 import argparse
 
 class Recipe:
-    def __init__(self, title:str, category:str, grouping:str, servings:int, prep_time:str, cook_time:str, ingredients: list[str], steps: list[str]):
+    def __init__(self, title:str, tags: list[str], category:str, grouping:str, prep_time:str, cook_time:str, servings:int, source_url:str, last_modified:str, ingredients: list[str], steps: list[str], hints: list[str]):
         self.title = title
+        self.tags = tags
         self.category = category
         self.grouping = grouping
-        self.servings = servings
         self.prep_time = prep_time
         self.cook_time = cook_time
+        self.servings = servings
+        self.source_url = source_url
+        self.last_modified = last_modified
         self.ingredients = ingredients
         self.steps = steps
+        self.hints = hints
 
     def to_json(self):
-        this = self.__dict__
-        this.pop('category')
-        this['ingredients'] = '\n'.join(self.ingredients)
-        this['steps'] = '\n'.join(self.steps)
-        return this
+        return self.__dict__
 
 class RecipeParser:
 
@@ -26,8 +26,10 @@ class RecipeParser:
         self.path = path
 
         self.properties = {}
+        self.properties['tags'] = []
         self.ingredients = []
         self.steps = []
+        self.hints = []
 
         self.linePointer = 0
 
@@ -69,21 +71,28 @@ class RecipeParser:
         assert(self.__lineEquals('## Schritte'))
         self.__parseSteps()
 
+        assert(self.__lineEquals('## Hinweise'))
+        self.__parseHints()
+
         return Recipe(
             self.properties['title'],
+            self.properties['tags'],
             self.properties['category'],
             self.properties['grouping'],
-            int(self.properties['servings']),
             self.properties['prep_time'],
             self.properties['cook_time'],
+            int(self.properties['servings']),
+            self.properties.get('source_url', ''),
+            self.properties.get('last_modified', ''),
             self.ingredients,
-            self.steps
+            self.steps,
+            self.hints
         )
 
     def __parseProperties(self):
         while not self.__lineEquals('---'):
-            if self.__lineEquals('tags:'):
-                self.properties['tags'] = []
+            if self.__lineStartsWith('tags:'):
+                pass
             elif self.__lineStartsWith('-'):
                 self.properties['tags'].append(self.__getCurrentLine()[2:])
             else:
@@ -135,6 +144,14 @@ class RecipeParser:
             self.__next()
         
         assert(self.__lineStartsWith('## '))
+
+    def __parseHints(self):
+        assert(self.__lineEquals('## Hinweise'))
+        self.__next()
+
+        while not self.__lineStartsWith('## ') and not self.__eof():
+            self.hints.append(self.__getCurrentLine())
+            self.__next()
 
 def searchRecipes(parentDir: str) -> list[str]:
     marker = '<!-- MARKER FOR MAPPER SCRIPT -->'

@@ -1,11 +1,30 @@
 [
-    {
-        "title": "Pfannkuchen",
-        "grouping": "Mehlspeisen",
-        "servings": 4,
-        "prep_time": "5min",
-        "cook_time": "20min",
-        "ingredients": "=== Header\n- 400 g Mehl\n- 4 Eier\n- 400 ml Milch",
-        "steps": "+ Zutaten zu einen glatten Teig vermischen\n+ Milch zugeben bis recht flüssig\n+ Portionsweise von beiden Seiten braten"
-    }
+  {
+    "title": "Pfannkuchen",
+    "tags": [
+      "Kochen",
+      "Mehlspeisen_Teigwaren"
+    ],
+    "category": "Kochen",
+    "grouping": "Mehlspeisen & Teigwaren",
+    "prep_time": "5min",
+    "cook_time": "20min",
+    "servings": 4,
+    "source_url": "Alex",
+    "last_modified": "2025-10-03",
+    "ingredients": [
+      "- 400 g Mehl",
+      "- 4 Eier",
+      "- 400 ml Milch",
+      "- Etwas mehr Milch bis Teig d\u00fcnn genug"
+    ],
+    "steps": [
+      "+ Mehl, Eier und Milch vermischen",
+      "+ Milch zugeben bis der Teig d\u00fcnn genug ist",
+      "+ Pfannkuchen nach und nach beidseitig braten"
+    ],
+    "hints": [
+      "- Servierbar mit Spargel, Salamisauce oder Nutella und Marmelade"
+    ]
+  }
 ]
