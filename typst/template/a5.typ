@@ -6,7 +6,7 @@
   return val;
 }
 
-#let printA5(recipes: array, allowMultiplePagesPerRecipe: false) = {
+#let printA5(recipes: array, allowMultiplePagesPerRecipe: false, includeKeys: false) = {
 
   import "components/recipe-sheet.typ": recipeSheet
   set page(
@@ -30,6 +30,11 @@
       })
     }
 
+    let key = ""
+    if includeKeys and recipe.at("key", default: "") != "" {
+      key = recipe.at("key", default: "")
+    }
+
     recipeSheet(
       title: recipe.title,
       grouping: recipe.grouping,
@@ -38,7 +43,8 @@
       servings: recipe.servings,
       ingredients: recipe.ingredients,
       steps: recipe.steps,
-      hints: recipe.hints
+      hints: recipe.hints,
+      key: key
     )
 
     if(allowMultiplePagesPerRecipe) {

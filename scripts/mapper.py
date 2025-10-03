@@ -1,6 +1,9 @@
 import json
 import os
 import argparse
+import re
+
+LINK_PATTERN = re.compile("\[\[([^\[\]]+)\]\]")
 
 class Recipe:
     def __init__(self, title:str, tags: list[str], category:str, grouping:str, prep_time:str, cook_time:str, servings:int, source_url:str, last_modified:str, ingredients: list[str], steps: list[str], hints: list[str]):
@@ -17,8 +20,40 @@ class Recipe:
         self.steps = steps
         self.hints = hints
 
-    def setId(self, categoryId:str, groupingId:str):
-        self.id = f'{categoryId.capitalize()}-{groupingId.capitalize()}-{self.title[0].upper()}'
+    def setKey(self, categoryId:str, groupingId:str):
+        self.key = f'{categoryId.capitalize()}-{groupingId.capitalize()}-{self.title[0].upper()}'
+
+    def replaceLinks(self):
+        def handleLinkMatch(match: re.Match[str]):
+            assert(len(match.groups()) == 1)
+            fileName = match.groups()[0].strip()
+            linkedRecipe = RECIPE_FILE_NAME_TO_RECIPE_MAPPER[fileName]
+            return f"{linkedRecipe.title} (ref. {linkedRecipe.key})"
+
+        for i in range(len(self.ingredients)):
+            if not self.__stringHasLink(self.ingredients[i]):
+                continue
+            self.ingredients[i] = LINK_PATTERN.sub(handleLinkMatch, self.ingredients[i])
+        for i in range(len(self.steps)):
+            if not self.__stringHasLink(self.steps[i]):
+                continue
+            self.steps[i] = LINK_PATTERN.sub(handleLinkMatch, self.steps[i])
+        for i in range(len(self.hints)):
+            if not self.__stringHasLink(self.hints[i]):
+                continue
+            self.hints[i] = LINK_PATTERN.sub(handleLinkMatch, self.hints[i])
+
+    def containsLinks(self):
+        return self.__collectionHasLink(self.ingredients) or self.__collectionHasLink(self.steps) or self.__collectionHasLink(self.hints)
+
+    def __collectionHasLink(self, list: list[str]):
+        for item in list:
+            if self.__stringHasLink(item):
+                return True
+        return False
+    
+    def __stringHasLink(self, line: str):
+        return bool(LINK_PATTERN.search(line))
 
     def to_json(self):
         return self.__dict__
@@ -50,7 +85,7 @@ class RecipeParser:
         return self.__getCurrentLine() == equals.strip()
     
     def __lineStartsWith(self, startsWith: str):
-        return self.__getCurrentLine().startswith(startsWith)
+        return self.__getCurrentLine().startswith(startsWith)        
 
     def __next(self):
         if(self.__eof()):
@@ -173,11 +208,19 @@ def searchRecipes(parentDir: str) -> list[str]:
     
     return foundFiles
 
+BUFFER_OF_RECIPES_WITH_LINKS = []
+RECIPE_FILE_NAME_TO_RECIPE_MAPPER = {}
+
 def parseRecipes(recipeFiles: list[str]) -> list[Recipe]:
     parsedRecipes = []
-    for recipe in recipeFiles:
-        parser = RecipeParser(recipe)
-        parsedRecipes.append(parser.parse())
+    for recipeFile in recipeFiles:
+        parser = RecipeParser(recipeFile)
+        recipe = parser.parse()
+        parsedRecipes.append(recipe)
+        recipeFileName = os.path.splitext(os.path.basename(recipeFile))[0]
+        RECIPE_FILE_NAME_TO_RECIPE_MAPPER[recipeFileName] = recipe
+        if(recipe.containsLinks()):
+            BUFFER_OF_RECIPES_WITH_LINKS.append(recipe)
     return parsedRecipes
 
 def groupByCategory(recipes: list[Recipe]) -> dict[str, list[Recipe]]:
@@ -205,7 +248,8 @@ def calculateIds(recipesByCategory: dict[str, list[Recipe]]):
         groupingIdMapper = getUniqueIdsFromSet(distinctGroupings)
 
         for recipe in recipesByCategory[category]:
-            recipe.setId(categoryIdMapper[recipe.category], groupingIdMapper[recipe.grouping])
+            recipe.setKey(categoryIdMapper[recipe.category], groupingIdMapper[recipe.grouping])
+
 
 def getUniqueIdsFromSet(setOfFullNames: list[str]):
     idMapper = {}
@@ -228,6 +272,10 @@ def getUniqueIdsFromSet(setOfFullNames: list[str]):
         idMapper[item[:idSplitPointer]] = item
     
     return dict((v, k) for k, v in idMapper.items())
+
+def processObsidianLinks():
+    for recipe in BUFFER_OF_RECIPES_WITH_LINKS:
+        recipe.replaceLinks()
 
 def exportCategories(categories: dict[str, list[Recipe]], outPath: str):
     for category in categories:
@@ -263,5 +311,6 @@ if __name__ == '__main__':
     print(f'Parsed and grouped by {len(categories.keys())} categories!')
     print('Generating IDs...')
     calculateIds(categories)
+    processObsidianLinks()
     print(f'Exporting json files to {outPath}...')
     exportCategories(categories, outPath)

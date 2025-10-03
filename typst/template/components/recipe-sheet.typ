@@ -6,12 +6,17 @@
   box(height: height, clip: false, bodyScale)
 }
 
-#let recipeSheet(title: str, grouping: str, servings: int, prep_time: str, cook_time: str, ingredients: array, steps: array, hints: array) = {
+#let recipeSheet(title: str, grouping: str, servings: int, prep_time: str, cook_time: str, ingredients: array, steps: array, hints: array, key: str) = {
     let servingsText = ""
   if(servings > 1) {
     servingsText = str(servings) + " Portionen";
   }else if(servings == 1) {
     servingsText = "1 Portion"
+  }
+
+  if(key != "") {
+    set text(size: 12pt)
+    place(right, [*#key*])
   }
 
   set text(size: 20pt)

@@ -3,6 +3,7 @@ set -e
 
 # Default format
 FORMAT="cards"
+INCLUDE_KEYS=0
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -16,9 +17,13 @@ while [[ $# -gt 0 ]]; do
             FORMAT="$2"
             shift 2
             ;;
+        -k|--include-keys)
+            INCLUDE_KEYS=1
+            shift 1
+            ;;
         -*)
             echo "Unknown option: $1"
-            echo "Usage: $0 [-f cards|a5] <input_path>"
+            echo "Usage: $0 [-f cards|a5] [-k|--include-keys] <input_path>"
             exit 1
             ;;
         *)
@@ -65,6 +70,7 @@ for json_file in "$TYPST_JSON_PATH"/*.json; do
     typst compile \
         --input=jsonPath="$json_file" \
         --input=format="$FORMAT" \
+        --input=includeKeys="$INCLUDE_KEYS" \
         ./main.typ "$pdf_file"
 done
 rm -r $TYPST_JSON_PATH
