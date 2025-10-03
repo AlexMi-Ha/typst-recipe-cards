@@ -1,4 +1,4 @@
-# Typst Recipe Collection
+# Typst Recipe Cards
 
 A streamlined solution to convert cooking recipes stored in an Obsidian vault (Markdown) into neatly formatted, printable PDF cards for your recipe box.
 
@@ -18,8 +18,8 @@ Before building your recipe collection, ensure the following:
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/AlexMi-Ha/TypstRecipeCollection.git
-cd TypstRecipeCollection
+git clone https://github.com/AlexMi-Ha/typst-recipe-cards.git
+cd typst-recipe-cards
 ```
 2. Ensure Pyhon and Typst are installed
 3. Make the build script executable (if needed):
