@@ -56,8 +56,8 @@ class RecipeParser:
         self._next()
 
         self._expect_and_parse_section('## Zutaten', self._parse_ingredients)
-        self._expect_and_parse_section('## Schritte', self._parse_ingredients)
-        self._expect_and_parse_section('## Hinweise', self._parse_ingredients)
+        self._expect_and_parse_section('## Schritte', self._parse_steps)
+        self._expect_and_parse_section('## Hinweise', self._parse_hints)
 
         return Recipe(
             title=self.properties['title'],
@@ -79,8 +79,9 @@ class RecipeParser:
         func()
 
     def _parse_props(self):
-        while not self.__lineEquals('---'):
-            if self.__lineStartsWith('tags:'):
+        self._next()
+        while not self._line_equals('---'):
+            if self._line_starts_with('tags:'):
                 # tags header -> Collect following lines of tags
                 self._next()
                 while self._line_starts_with('- '):
@@ -93,7 +94,7 @@ class RecipeParser:
 
             key, val = self._current().split(':', 1)
             self.properties[key.strip()] = val.strip().strip('"')
-            self.__next()
+            self._next()
 
         self._assert_line_equals('---')
         self._next()
@@ -102,7 +103,7 @@ class RecipeParser:
         required = ('title', 'category', 'grouping', 'servings', 'prep_time', 'cook_time')
         missing = [k for k in required if k not in self.properties]
         if missing:
-            raise RecipeParserError(f"Missing required properties in recipe at {self.path}:\n{missing}")
+            raise RecipeParserError(f"Missing required properties in recipe at {self.path}: {missing}\nFound only {self.properties}")
         
     def _parse_ingredients(self):
         # current line '## Zutaten'
@@ -123,7 +124,7 @@ class RecipeParser:
         while not self._eof() and not self._line_starts_with('## '):
             cur = self._current()
             if self._line_starts_with(f'{cur_step}.'):
-                cur = '+' + cur[len(f'{cur_step}.'):].strip()
+                cur = '+ ' + cur[len(f'{cur_step}.'):].strip()
                 self.steps.append(cur)
                 cur_step += 1
             else:
@@ -138,7 +139,7 @@ class RecipeParser:
 
     def _parse_hints(self):
         # current line '## Hinweise'
-        self.next()
+        self._next()
         while not self._eof() and not self._line_starts_with('## '):
             self.hints.append(self._current())
             self._next()

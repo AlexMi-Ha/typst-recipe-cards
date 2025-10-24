@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 import re
 
 
-LINK_PATTERN = re.compile("\[\[([^\[\]]+)\]\]")
+LINK_PATTERN = re.compile(r"\[\[([^\[\]]+)\]\]")
 
 @dataclass
 class Recipe:
