@@ -1,3 +1,80 @@
 main.pdf
 out/
 typst/data/
+
+# -----------------------------
+# Python build & packaging
+# -----------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+
+# -----------------------------
+# IDE & editor specific
+# -----------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# -----------------------------
+# Test / coverage
+# -----------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.cache/
+
+# -----------------------------
+# Type checker / lint / formatter
+# -----------------------------
+.mypy_cache/
+.dmypy.json
+black.log
+
+# -----------------------------
+# Jupyter / notebooks
+# -----------------------------
+.ipynb_checkpoints
+*.ipynb
+
+# -----------------------------
+# OS / system files
+# -----------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# -----------------------------
+# Logs / temp files
+# -----------------------------
+*.log
+*.out
+*.err
+*.tmp
+*.bak
+*.old

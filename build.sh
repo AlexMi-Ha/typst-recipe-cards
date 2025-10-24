@@ -10,7 +10,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         -h|--help)
             echo "typst-recipe-cards:"
-            echo "Usage: $0 [-f cards|a5] <input_path>"
+            echo "Usage: $0 [-f cards|a5] [-k|--include-keys] <input_path>"
             exit 1
             ;;
         -f|--format)
@@ -45,6 +45,7 @@ if [[ "$FORMAT" != "cards" && "$FORMAT" != "a5" ]]; then
     exit 1
 fi
 
+INPUT_PATH=$(realpath $INPUT_PATH)
 JSON_OUTPUT="./out/json"
 PDF_OUTPUT="./out/pdf"
 
@@ -57,7 +58,12 @@ rm -f $JSON_OUTPUT/*.json
 rm -f $PDF_OUTPUT/*.pdf
 rm -f ./typst/$TYPST_JSON_PATH/*.json
 
-python3 ./scripts/mapper.py -i "$INPUT_PATH" -o "$JSON_OUTPUT"
+JSON_OUTPUT=$(realpath $JSON_OUTPUT)
+PDF_OUTPUT=$(realpath $PDF_OUTPUT)
+
+cd ./scripts
+python3 -m mapper.cli -i "$INPUT_PATH" -o "$JSON_OUTPUT"
+cd ../
 
 cp $JSON_OUTPUT/*.json ./typst/$TYPST_JSON_PATH/
 
@@ -65,7 +71,7 @@ cd ./typst
 
 for json_file in "$TYPST_JSON_PATH"/*.json; do
     filename=$(basename "$json_file" .json)    
-    pdf_file="../$PDF_OUTPUT/$filename.pdf"
+    pdf_file="$PDF_OUTPUT/$filename.pdf"
     echo $json_file
     typst compile \
         --input=jsonPath="$json_file" \
