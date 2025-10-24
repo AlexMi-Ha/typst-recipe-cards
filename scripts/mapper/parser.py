@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Dict, Any
 from .models import Recipe
 
 class RecipeParserError(Exception):
@@ -9,7 +9,7 @@ class RecipeParser:
     def __init__(self, lines: List[str], source: str = "<memory>"):
         self.lines = [l.rstrip("\n") for l in lines]
         self.path = source
-        self.properties = {"tags": []}
+        self.properties: Dict[str, Any] = {"tags": []}
         self.ingredients: List[str] = []
         self.steps: List[str] = []
         self.hints: List[str] = []
@@ -104,6 +104,8 @@ class RecipeParser:
         missing = [k for k in required if k not in self.properties]
         if missing:
             raise RecipeParserError(f"Missing required properties in recipe at {self.path}: {missing}\nFound only {self.properties}")
+        if not self.properties['servings'].isdigit():
+            raise RecipeParserError(f"Invalid value for servings in recipe at {self.path}: {self.properties['servings']}")
         
     def _parse_ingredients(self):
         # current line '## Zutaten'
